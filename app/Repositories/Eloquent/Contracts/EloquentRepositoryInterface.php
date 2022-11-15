@@ -20,20 +20,22 @@ interface EloquentRepositoryInterface
      * @return Collection
      */
     public function allTrashed(): Collection;
+
     /**
      * Find model by id.
      * @param int $modelId
      * @param array $columns
      * @param array $relations
      * @param array $appends
-     * @return Model
+     * @return Model|null
      */
 
     public function findById(int $modelId, array $columns = ['*'], array $relations = [], array $appends = []): ?Model;
+
     /**
      *Find trashed model by id.
-     *@param int $modelId
-     *i@return Model
+     * @param int $modelId
+     * @return Model|null
      */
     public function findTrashedById(int $modelId): ?Model;
     /**
