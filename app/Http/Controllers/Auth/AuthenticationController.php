@@ -30,14 +30,15 @@ class AuthenticationController extends Controller
              * @var User $user
              */
             $user = Auth::user();
-            $token = $user->createToken('api-token')->accessToken;
+            $token = $user->createToken('api-token')->plainTextToken;
             return $this->sendSuccess(['token' => $token, 'user' => $user]);
         }else {
             return $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
         }
     }
 
-    public  function logout(Request $request){
+    public  function logout(Request $request): Response
+    {
         /** @var  User $user*/
         $user = $request->user();
         $user->currentAccessToken()->delete();
