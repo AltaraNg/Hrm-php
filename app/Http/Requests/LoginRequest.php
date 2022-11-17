@@ -3,7 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+/**
+ * @property-read string $staff_id
+ * @property-read string $password
+*/
 class LoginRequest extends FormRequest
 {
     /**

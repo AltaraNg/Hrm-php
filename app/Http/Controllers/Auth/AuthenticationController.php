@@ -25,18 +25,23 @@ class AuthenticationController extends Controller
      */
     public function login(LoginRequest $request): Response
     {
-//        $data = (object)$request->validated();
         if (Auth::attempt(['staff_id' => $request->staff_id, 'password' => $request->password])) {
             /**
              * @var User $user
              */
             $user = Auth::user();
-//            dd($user);
             $token = $user->createToken('api-token')->accessToken;
             return $this->sendSuccess(['token' => $token, 'user' => $user]);
-        }else{
-            return  $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
+        }else {
+            return $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
         }
-
     }
+
+    public  function logout(Request $request){
+        /** @var  User $user*/
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+        return $this->sendSuccess([], 'You have been successfully logged out');
+    }
+
 }
