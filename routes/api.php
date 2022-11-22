@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RolePermissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,5 @@ Route::prefix('auth')->group(function (){
 Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
+    Route::patch('assign/permission/to/role/{role}', [RolePermissionController::class, 'assignPermissionsToRole'])
 });

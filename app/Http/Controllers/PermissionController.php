@@ -20,10 +20,16 @@ class PermissionController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => ['required', 'string', 'unique:permissions,name']
+            'name' => ['required', 'string', 'unique:permissions,name'],
+            'role_id' => ['nullable', 'integer', 'exists:roles,id'],
         ], ['name.unique' => 'Permission with the supplied name already exists']);
-        $role = Permission::create(['name' => $request->name]);
-        return $this->sendSuccess(['role' => new PermissionResource($role)], 'Role created successfully');
+        /** @var Permission $permission */
+        $permission = Permission::create(['name' => $request->input('name')]);
+        $role_id = $request->input('role_id');
+        if ($role_id){
+            $permission->assignRole($role_id);
+        }
+        return $this->sendSuccess(['role' => new PermissionResource($permission)], 'Role created successfully');
     }
 //
     public function show(Request $request, Permission $permission): Response

@@ -21,9 +21,16 @@ class RoleController extends Controller
     public function store(Request $request): Response
     {
         $request->validate([
-            'name' => ['required', 'string', 'unique:roles,name']
+            'name' => ['required', 'string', 'unique:roles,name'],
+            'permissions' => ['nullable', 'array', 'min:1'],
+            'permissions.*' => ['required', 'integer', 'exists:permissions,id']
         ], ['name.unique' => 'Role with the supplied name already exists']);
+        /** @var $role Role */
         $role = Role::create(['name' => $request->name]);
+        $permissions = $request->input('permissions');
+        if ($permissions && is_countable($permissions)){
+            $role->syncPermissions($permissions);
+        }
         return $this->sendSuccess(['role' => new RoleResource($role)], 'Role created successfully');
     }
 
