@@ -13,7 +13,7 @@ class RoleController extends Controller
 {
     public function index(): Response
     {
-        return $this->sendSuccess(['roles' => RoleResource::collection(Role::all())]);
+        return $this->sendSuccess(['roles' => RoleResource::collection(Role::paginate(request('per_page')))]);
     }
 
     /**
