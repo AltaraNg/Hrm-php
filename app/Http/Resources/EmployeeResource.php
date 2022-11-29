@@ -29,7 +29,7 @@ class EmployeeResource extends JsonResource
                 'created_at' => $employee->created_at,
             ],
             'relationships' => [
-                'branch' => ( $employee->branch),
+                'branch' => $this->whenLoaded('branch', $employee->branch),
             ]
         ];
     }
