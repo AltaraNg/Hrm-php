@@ -17,7 +17,7 @@ class UserRepository extends BaseRepository
         return $this->model->query()->where('email', $email)->first();
     }
 
-    public function filterUser()
+    public function filter()
     {
 
         //TODO, load role relation
