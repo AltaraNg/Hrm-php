@@ -3,8 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Filters\UserBuilder;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -30,6 +32,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $referee_1_phone_no
  * @property string $referee_2_phone_no
  * @property Carbon $date_of_birth
+ * @property int $age
  * @property int $hr_id
  * @property string $nationality
  * @property string $next_of_kin_name
@@ -50,6 +53,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read  Carbon $created_at
  * @property-read  Carbon $updated_at
  * Relationships
+ * @property Branch $branch
  */
 class User extends Authenticatable
 {
@@ -70,6 +74,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'api_token',
+        'hr_id',
     ];
 
     /**
@@ -79,5 +85,26 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'date_of_birth' => 'date',
+        'portal_access' => 'boolean',
+        'date_of_appointment' => 'date:Y-m-d',
+        'date_of_exit' => 'date'
     ];
+
+    public function getAgeAttribute(): ?int
+    {
+        return $this->date_of_birth?->diffInYears(Carbon::now());
+    }
+
+    public function newEloquentBuilder($query): UserBuilder
+    {
+        return new UserBuilder($query);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class,);
+    }
 }
