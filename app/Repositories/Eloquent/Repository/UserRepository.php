@@ -16,5 +16,20 @@ class UserRepository extends BaseRepository
     {
         return $this->model->query()->where('email', $email)->first();
     }
+
+    public function filter()
+    {
+
+        //TODO, load role relation
+        return $this->model->query()->with(
+            [
+                'branch:id,name,status,category,description'
+            ]
+        )->whereName(request('name'))
+            ->whereLocation(request('location'))
+            ->whereEmail(request('email'))
+            ->whereRole(request('role'));
+
+    }
 }
 
