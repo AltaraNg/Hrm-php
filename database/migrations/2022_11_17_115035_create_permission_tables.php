@@ -14,11 +14,26 @@ class CreatePermissionTables extends Migration
      */
     public function up()
     {
-        //prepare previous roles_sales_categories
+
+
+        // prepare previous roles_sales_categories
         Schema::table('roles_sales_categories', function (Blueprint $table) {
-            $table->dropForeign('roles_sales_categories_role_id_foreign');
+            $foreignKeys = $this->listTableForeignKeys('roles_sales_categories');
+            if (in_array('roles_sales_categories_role_id_foreign', $foreignKeys)) {
+                $table->dropForeign('roles_sales_categories_role_id_foreign');
+            }
         });
         Schema::table('roles_sales_categories', function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id')->change();
+        });
+        //users table
+        Schema::table('users', function (Blueprint $table) {
+            $foreignKeys = $this->listTableForeignKeys('users');
+            if (in_array('users_ibfk_1', $foreignKeys)) {
+                $table->dropForeign('users_ibfk_1');
+            }
+        });
+        Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('role_id')->change();
         });
         $tableNames = config('permission.table_names');
@@ -47,7 +62,7 @@ class CreatePermissionTables extends Migration
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
             }
-//            $table->string('name');       // For MySQL 8.0 use string('name', 125);
+            //            $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
             $table->timestamps();
             if ($teams || config('permission.testing')) {
@@ -72,13 +87,16 @@ class CreatePermissionTables extends Migration
                 $table->unsignedBigInteger($columnNames['team_foreign_key']);
                 $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
 
-                $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
+                $table->primary(
+                    [$columnNames['team_foreign_key'], PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_permissions_permission_model_type_primary'
+                );
             } else {
-                $table->primary([PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_permissions_permission_model_type_primary');
+                $table->primary(
+                    [PermissionRegistrar::$pivotPermission, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_permissions_permission_model_type_primary'
+                );
             }
-
         });
 
         Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
@@ -96,11 +114,15 @@ class CreatePermissionTables extends Migration
                 $table->unsignedBigInteger($columnNames['team_foreign_key']);
                 $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
 
-                $table->primary([$columnNames['team_foreign_key'], PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
+                $table->primary(
+                    [$columnNames['team_foreign_key'], PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_roles_role_model_type_primary'
+                );
             } else {
-                $table->primary([PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
-                    'model_has_roles_role_model_type_primary');
+                $table->primary(
+                    [PermissionRegistrar::$pivotRole, $columnNames['model_morph_key'], 'model_type'],
+                    'model_has_roles_role_model_type_primary'
+                );
             }
         });
 
@@ -142,7 +164,16 @@ class CreatePermissionTables extends Migration
         Schema::drop($tableNames['role_has_permissions']);
         Schema::drop($tableNames['model_has_roles']);
         Schema::drop($tableNames['model_has_permissions']);
-        Schema::drop($tableNames['roles']);
+        // Schema::drop($tableNames['roles']);
         Schema::drop($tableNames['permissions']);
+    }
+
+    public function listTableForeignKeys($table)
+    {
+        $conn = Schema::getConnection()->getDoctrineSchemaManager();
+
+        return array_map(function ($key) {
+            return $key->getName();
+        }, $conn->listTableForeignKeys($table));
     }
 }
