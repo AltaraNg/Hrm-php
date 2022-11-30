@@ -14,6 +14,13 @@ class CreatePermissionTables extends Migration
      */
     public function up()
     {
+        //prepare previous roles_sales_categories
+        Schema::table('roles_sales_categories', function (Blueprint $table) {
+            $table->dropForeign('roles_sales_categories_role_id_foreign');
+        });
+        Schema::table('roles_sales_categories', function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id')->change();
+        });
         $tableNames = config('permission.table_names');
         $columnNames = config('permission.column_names');
         $teams = config('permission.teams');

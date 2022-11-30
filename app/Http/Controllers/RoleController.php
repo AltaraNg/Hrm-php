@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoleCollection;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class RoleController extends Controller
 {
-    public function index(): Response
+    public function index()
     {
-        return $this->sendSuccess(['roles' => RoleResource::collection(Role::paginate(request('per_page')))]);
+        return $this->sendSuccess([new RoleCollection(Role::paginate(request('per_page')))], 'All roles fetched successfully');
     }
 
     /**
@@ -28,7 +30,7 @@ class RoleController extends Controller
         /** @var $role Role */
         $role = Role::create(['name' => $request->name]);
         $permissions = $request->input('permissions');
-        if ($permissions && is_countable($permissions)){
+        if ($permissions && is_countable($permissions)) {
             $role->syncPermissions($permissions);
         }
         return $this->sendSuccess(['role' => new RoleResource($role)], 'Role created successfully');
