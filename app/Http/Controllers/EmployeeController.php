@@ -18,7 +18,7 @@ class EmployeeController extends Controller
     public function index(): Response
     {
         $employees = $this->userRepository->filter()->orderBy('created_at')->paginate();
-        return $this->sendSuccess(['employees' => new EmployeeCollection($employees)], 'Employees fetch successfully');
+        return $this->sendSuccess([ new EmployeeCollection($employees)], 'Employees fetch successfully');
     }
 
     public function show(User $employee): Response

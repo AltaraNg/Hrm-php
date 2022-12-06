@@ -31,7 +31,7 @@ class AuthenticationController extends Controller
              */
             $user = Auth::user();
             $token = $user->createToken('api-token')->plainTextToken;
-            return $this->sendSuccess(['token' => $token, 'user' => $user]);
+            return $this->sendSuccess(['token' => $token, 'user' => $user->load('role')]);
         }else {
             return $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
         }
