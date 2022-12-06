@@ -15,6 +15,6 @@ class EmployeeCollection extends ResourceCollection
     public function toArray($request)
     {
         $response = ['employees' => $this->collection];
-        return getPagination($response, $this->resource);
+        return PaginatedCollection($response, $this->resource);
     }
 }

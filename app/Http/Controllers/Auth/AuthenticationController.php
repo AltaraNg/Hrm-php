@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helper\HttpResponseCodes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Resources\EmployeeResource;
 use App\Models\User;
 use App\Repositories\Eloquent\Repository\UserRepository;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class AuthenticationController extends Controller
              */
             $user = Auth::user();
             $token = $user->createToken('api-token')->plainTextToken;
-            return $this->sendSuccess(['token' => $token, 'user' => $user->load('role')]);
+            return $this->sendSuccess(['token' => $token, 'user' => new EmployeeResource($user->load('role'))]);
         }else {
             return $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
         }
