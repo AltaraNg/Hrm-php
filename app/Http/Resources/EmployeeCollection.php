@@ -14,6 +14,7 @@ class EmployeeCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $response = ['employees' => $this->collection];
+        return PaginatedCollection($response, $this->resource);
     }
 }

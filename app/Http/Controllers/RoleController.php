@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RoleCollection;
 use App\Http\Resources\RoleResource;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;

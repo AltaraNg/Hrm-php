@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PermissionCollection;
 use App\Http\Resources\PermissionResource;
-use App\Models\Permission;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
     public function index(): Response
     {
-        return $this->sendSuccess(['permissions' => PermissionResource::collection(Permission::all())]);
+        return $this->sendSuccess([ new PermissionCollection(Permission::paginate(\request('per_page')))], 'Permissions fetched successfully');
     }
 
     /**
      */
     public function store(Request $request): Response
     {
-        $request->validate([
+        $this->validate($request, [
             'name' => ['required', 'string', 'unique:permissions,name'],
             'role_id' => ['nullable', 'integer', 'exists:roles,id'],
         ], ['name.unique' => 'Permission with the supplied name already exists']);
@@ -29,7 +31,7 @@ class PermissionController extends Controller
         if ($role_id){
             $permission->assignRole($role_id);
         }
-        return $this->sendSuccess(['role' => new PermissionResource($permission)], 'Role created successfully');
+        return $this->sendSuccess(['permission' => new PermissionResource($permission)], 'Role created successfully');
     }
 //
     public function show(Request $request, Permission $permission): Response

@@ -35,10 +35,6 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('permissions', PermissionController::class);
     Route::patch('assign/permission/to/role/{role}', [RolePermissionController::class, 'assignPermissionsToRole']);
     Route::patch('assign/role/to/user/{user}', [RolePermissionController::class, 'assignRoleToUser']);
-});
-
-
-Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('employees')->group(function (){
         Route::get('/', [EmployeeController::class, 'index']);
         Route::get('/{employee}', [EmployeeController::class, 'show']);

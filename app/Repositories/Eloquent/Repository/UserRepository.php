@@ -23,7 +23,8 @@ class UserRepository extends BaseRepository
         //TODO, load role relation
         return $this->model->query()->with(
             [
-                'branch:id,name,status,category,description'
+                'branch:id,name,status,category,description',
+                'role:id,name',
             ]
         )->whereName(request('name'))
             ->whereLocation(request('location'))

@@ -30,6 +30,7 @@ class EmployeeResource extends JsonResource
             ],
             'relationships' => [
                 'branch' => $this->whenLoaded('branch', $employee->branch),
+                'role' => $this->whenLoaded('role', $employee->role),
             ]
         ];
     }
