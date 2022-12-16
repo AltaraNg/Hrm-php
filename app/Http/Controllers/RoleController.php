@@ -15,7 +15,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        return $this->sendSuccess([new RoleCollection(Role::paginate(request('per_page')))], 'All roles fetched successfully');
+        return $this->sendSuccess([new RoleCollection(Role::with('permissions')->paginate(request('per_page')))], 'All roles fetched successfully');
     }
 
     /**
@@ -33,7 +33,7 @@ class RoleController extends Controller
         if ($permissions && is_countable($permissions)) {
             $role->syncPermissions($permissions);
         }
-        return $this->sendSuccess(['role' => new RoleResource($role)], 'Role created successfully');
+        return $this->sendSuccess(['role' => new RoleResource($role->load('permissions'))], 'Role created successfully');
     }
 
     public function show(Request $request, Role $role): Response
@@ -48,7 +48,7 @@ class RoleController extends Controller
         ], ['name.unique' => 'Role with the supplied name already exists']);
         $role->name = $request->name;
         $role->save();
-        return $this->sendSuccess(['role' => new RoleResource($role)], 'Role created successfully');
+        return $this->sendSuccess(['role' => new RoleResource($role->load('permissions'))], 'Role created successfully');
     }
 
     public function destroy(Role $role): Response
