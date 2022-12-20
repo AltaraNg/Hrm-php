@@ -8,11 +8,13 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * User model class
@@ -95,7 +97,7 @@ class User extends Authenticatable
         'date_of_appointment' => 'date:Y-m-d',
         'date_of_exit' => 'date'
     ];
-
+    protected $guard_name = 'sanctum';
     public function getAgeAttribute(): ?int
     {
         return $this->date_of_birth?->diffInYears(Carbon::now());
@@ -111,8 +113,4 @@ class User extends Authenticatable
         return $this->belongsTo(Branch::class,);
     }
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class, );
-    }
 }
