@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Helper\HttpResponseCodes;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -28,11 +29,15 @@ class RolePermissionController extends Controller
      */
     public function assignRoleToUser(Request $request, User $user): \Illuminate\Http\Response
     {
+        
         $this->validate($request, [
-            'role' => ['required', 'integer', 'exists:roles,id'],
+            'role' => ['required', 'integer'],
         ]);
-        $user->syncRoles($request->input('role'));
-
-        return $this->sendSuccess(['roles' => $role]);
+        $role = Role::findById($request->role);
+        if (!$role) {
+            return $this->sendError('The supplied role id does not exists', HttpResponseCodes::BAD_REQUEST);
+        }
+        $user->syncRoles($role);
+        return $this->sendSuccess(['user' => $user]);
     }
 }
