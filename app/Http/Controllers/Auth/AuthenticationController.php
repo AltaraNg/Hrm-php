@@ -32,7 +32,7 @@ class AuthenticationController extends Controller
              */
             $user = Auth::user();
             $token = $user->createToken('api-token')->plainTextToken;
-            return $this->sendSuccess(['token' => $token, 'user' => new EmployeeResource($user->load('role'))]);
+            return $this->sendSuccess(['token' => $token, 'user' => new EmployeeResource($user->load('roles'))]);
         }else {
             return $this->sendError('Invalid email or password supplied', HttpResponseCodes::LOGIN_FAIL);
         }

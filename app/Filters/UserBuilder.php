@@ -27,13 +27,4 @@ class UserBuilder extends Builder
         $this->where('email', $email);
         return $this;
     }
-
-
-    public function whereRole(int $role = null): static
-    {
-        if ($role == null) return $this;
-        $this->where('role_id', $role);
-        return $this;
-    }
-
 }
