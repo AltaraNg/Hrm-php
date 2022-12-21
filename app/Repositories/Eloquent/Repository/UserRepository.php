@@ -24,13 +24,12 @@ class UserRepository extends BaseRepository
         return $this->model->query()->with(
             [
                 'branch:id,name,status,category,description',
-                'role:id,name',
+                'roles:id,name',
             ]
         )->whereName(request('name'))
             ->whereLocation(request('location'))
             ->whereEmail(request('email'))
             ->whereRole(request('role'));
-
     }
 }
 
