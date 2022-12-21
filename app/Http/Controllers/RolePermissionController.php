@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helper\HttpResponseCodes;
+use App\Http\Resources\EmployeeResource;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -38,6 +39,6 @@ class RolePermissionController extends Controller
             return $this->sendError('The supplied role id does not exists', HttpResponseCodes::BAD_REQUEST);
         }
         $user->syncRoles($role);
-        return $this->sendSuccess(['user' => $user]);
+        return $this->sendSuccess(['user' => new EmployeeResource($user)]);
     }
 }
