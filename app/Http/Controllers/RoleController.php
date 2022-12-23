@@ -13,9 +13,17 @@ use Illuminate\Validation\ValidationException;
 
 class RoleController extends Controller
 {
-    public function index()
+    public function index(Request $request): Response
     {
-        return $this->sendSuccess([new RoleCollection(Role::with('permissions')->paginate(request('per_page')))], 'All roles fetched successfully');
+        $roleQuery = Role::query();
+        if ($request->has('name')  && $request->query('name') != null) {
+          $roleQuery =  $roleQuery->where('name','LIKE', '%'. $request->query('name'). '%');
+        }
+        if ($request->has('permission') && $request->query('permission') != null){
+            $roleQuery =  $roleQuery->withWhereHas('permissions', fn ($query) => $query->where('name','LIKE','%'. $request->query('permission') .'%'));
+        }
+        $roles = $roleQuery->with('permissions')->paginate(request('per_page'));
+        return $this->sendSuccess([new RoleCollection($roles)], 'All roles fetched successfully');
     }
 
     /**
