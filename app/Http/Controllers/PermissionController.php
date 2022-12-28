@@ -12,9 +12,14 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return $this->sendSuccess([ new PermissionCollection(Permission::paginate(\request('per_page')))], 'Permissions fetched successfully');
+        $permissionQuery = Permission::query();
+        if ($request->has('name')  && $request->query('name') != null) {
+            $permissionQuery =  $permissionQuery->where('name','LIKE', '%'. $request->query('name'). '%');
+        }
+        $permissions =  $permissionQuery->paginate(\request('per_page'));
+        return $this->sendSuccess([ new PermissionCollection($permissions)], 'Permissions fetched successfully');
     }
 
     /**
