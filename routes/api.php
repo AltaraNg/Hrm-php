@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticationController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RolePermissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +21,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+
+Route::prefix('auth')->group(function (){
+    Route::post('login', [AuthenticationController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function (){
+        Route::post('logout', [AuthenticationController::class, 'logout']);
+    });
+});
+Route::middleware('auth:sanctum')->group(function (){
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
+    Route::patch('assign/permission/to/role/{role}', [RolePermissionController::class, 'assignPermissionsToRole']);
+    Route::patch('assign/role/to/user/{user}', [RolePermissionController::class, 'assignRoleToUser']);
+    Route::prefix('employees')->group(function (){
+        Route::get('/', [EmployeeController::class, 'index']);
+        Route::get('/{employee}', [EmployeeController::class, 'show']);
+    });
 });
